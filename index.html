@@ -4,114 +4,152 @@
     <meta charset="UTF-8">
     <title>Game Title</title>
     <style>
-        /* Стили для игрового поля */
-        #game-container {
-          display: grid;
-          grid-template-columns: repeat(10, 1fr);
-          grid-template-rows: repeat(10, 1fr);
-          gap: 10px;
-          width: 500px;
-          height: 500px;
-          margin: 0 auto;
-          border: 2px solid black;
-          padding: 10px;
+        .row {
+          display: flex;
         }
         
-        /* Стили для ячеек поля */
         .cell {
-          width: 100%;
-          height: 100%;
-          background-color: white;
+          width: 50px;
+          height: 50px;
           border: 1px solid black;
-          box-sizing: border-box;
         }
         
-        /* Стили для персонажей */
         .player {
-          width: 100%;
-          height: 100%;
-          background-color: blue;
-          position: relative;
+          background-color: red;
         }
         
         .player2 {
-          background-color: red;
+          background-color: blue;
+        }
+        
+        .obstacle {
+          background-color: black;
         }
       </style>
       
-  </head>
-  <body>
-    <div id="game-container"></div>
-
-    <script>
-      const gameContainer = document.getElementById('game-container');
-
-      // определение количества строк и столбцов игрового поля
-      const numRows = 10;
-      const numCols = 10;
-
-      // создание игрового поля и отображение персонажей
-      for (let i = 0; i < numRows; i++) {
-        const row = document.createElement('div');
-        row.classList.add('row');
-        
-        for (let j = 0; j < numCols; j++) {
-          const cell = document.createElement('div');
-          cell.classList.add('cell');
-          row.appendChild(cell);
-        }
-        
-        gameContainer.appendChild(row);
-      }
-
-      // объекты игроков и препятствий
-      const player1 = {
-        x: 0,
-        y: 0
-      };
+      <div id="game-container"></div>
       
-      const player2 = {
-        x: numCols - 1,
-        y: numRows - 1
-      };
-      
-      const obstacles = [
-        { x: 2, y: 2 },
-        { x: 7, y: 5 },
-        { x: 4, y: 8 },
-        // ...
-      ];
+      <script>
+       const gameContainer = document.getElementById('game-container');
 
-      // функция для отображения игроков и препятствий на игровом поле
-      function drawPlayersAndObstacles() {
-        const cells = gameContainer.querySelectorAll('.cell');
+// определение количества строк и столбцов игрового поля
+const numRows = 10;
+const numCols = 10;
 
-// отображение игрока 1
-const player1CellIndex = player1.y * numCols + player1.x;
-cells[player1CellIndex].classList.add('player');
+// создание игрового поля и отображение персонажей
+for (let i = 0; i < numRows; i++) {
+  const row = document.createElement('div');
+  row.classList.add('row');
 
-// отображение игрока 2
-const player2CellIndex = player2.y * numCols + player2.x;
-cells[player2CellIndex].classList.add('player2');
+  for (let j = 0; j < numCols; j++) {
+    const cell = document.createElement('div');
+    cell.classList.add('cell');
+    row.appendChild(cell);
+  }
 
-// отображение препятствий
-obstacles.forEach(obstacle => {
-  const obstacleCellIndex = obstacle.y * numCols + obstacle.x;
-  cells[obstacleCellIndex].classList.add('obstacle');
+  gameContainer.appendChild(row);
+}
+
+// объекты игроков и препятствий
+const player1 = {
+  x: 0,
+  y: 0
+};
+
+const player2 = {
+  x: numCols - 1,
+  y: numRows - 1
+};
+
+const obstacles = [
+  { x: 2, y: 2 },
+  { x: 7, y: 5 },
+  { x: 4, y: 8 },
+  // ...
+];
+
+// функция для отображения игроков и препятствий на игровом поле
+function drawPlayersAndObstacles() {
+  const cells = gameContainer.querySelectorAll('.cell');
+
+  // отображение игрока 1
+  const player1CellIndex = player1.y * numCols + player1.x;
+  cells[player1CellIndex].classList.add('player');
+
+  // отображение игрока 2
+  const player2CellIndex = player2.y * numCols + player2.x;
+  cells[player2CellIndex].classList.add('player2');
+
+  // отображение препятствий
+  obstacles.forEach(obstacle => {
+    const obstacleCellIndex = obstacle.y * numCols + obstacle.x;
+    cells[obstacleCellIndex].classList.add('obstacle');
+  });
+}
+
+// вызов функции для отображения игроков и препятствий на игровом поле
+drawPlayersAndObstacles();
+
+// функция для перемещения игроков
+function movePlayer(player, x, y) {
+  const cells = gameContainer.querySelectorAll('.cell');
+  
+  // проверка наличия препятствия в новой позиции игрока
+  const isObstacle = obstacles.some(obstacle => obstacle.x === x && obstacle.y === y);
+  if (!isObstacle) {
+
+    // удаление игрока из старой ячейки
+    const oldCellIndex = player.y * numCols + player.x;
+    cells[oldCellIndex].classList.remove('player', 'player2');
+
+    // обновление позиции игрока
+    player.x = x;
+    player.y = y;
+
+    // отображение игрока в новой ячейке
+    const newCellIndex = player.y * numCols + player.x;
+    if (player === player1) {
+      cells[newCellIndex].classList.add('player');
+    } else {
+      cells[newCellIndex].classList.add('player2');
+    }
+  }
+}
+
+// обработч
+
+
+// обработчик события нажатия клавиши
+document.addEventListener('keydown', event => {
+  switch (event.key) {
+    case 'ArrowUp':
+      movePlayer(player1, player1.x, player1.y - 1);
+      break;
+    case 'ArrowDown':
+      movePlayer(player1, player1.x, player1.y + 1);
+      break;
+    case 'ArrowLeft':
+      movePlayer(player1, player1.x - 1, player1.y);
+      break;
+    case 'ArrowRight':
+      movePlayer(player1, player1.x + 1, player1.y);
+      break;
+    case 'w':
+      movePlayer(player2, player2.x, player2.y - 1);
+      break;
+    case 's':
+      movePlayer(player2, player2.x, player2.y + 1);
+      break;
+    case 'a':
+      movePlayer(player2, player2.x - 1, player2.y);
+      break;
+    case 'd':
+      movePlayer(player2, player2.x + 1, player2.y);
+      break;
+  }
 });
 
 
 
-  // функция для обновления игрового поля
-  function updateGame() {
-    // код для обновления игрового поля, проверки столкновений, и т.д.
-    // ...
-
-    // отображение изменений
-    drawPlayersAndObstacles();
-  }
-  
-  // вызов функции для отображения игроков и препятствий на игровом поле
-  drawPlayersAndObstacles();
 </script>
 
